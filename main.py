@@ -123,14 +123,40 @@ def insert(userId, username, amount):
 
 @client.command(aliases=["gamble","flip","coinflip"])
 async def bet(ctx, amount, decision):
+    userId = ctx.message.author.id
     lst = ["heads", "tails"]
     answer = random.choice(lst)
-    if answer == decision:
-        message = f"The bot got {answer} you win {int(amount) * 2}!"
-    else:
-        message = f"The bot got {answer} you're dogshit lmao you lost everything!"
+    message = bet_money(userId, amount, answer, decision)
     await ctx.send(message)
 
+def bet_money(userId, amount, answer, decision):
+    connection = sqlite3.connect("./test.db")
+
+    cursor = connection.cursor()
+    sql = "SELECT * from userData where id = ?"
+    cursor.execute(sql, (userId,))
+    data = cursor.fetchone()
+    try:
+        amount = int(amount)
+        if data[2] >= amount and data is not None:
+            if amount > 0:
+                if answer == decision:
+                    message = f"The bot got {answer} you win ${amount}!"
+                    cursor.execute("UPDATE userData set balance = balance + ? where id = ?",(amount, str(userId)))
+            
+                else:
+                    message = f"The bot got {answer} you're dogshit lmao you lost ${amount} dumbass!"
+                    cursor.execute("UPDATE userData set balance = balance - ? where id = ?",(amount, str(userId)))
+            else:
+                message = "You cant bet your IQ dumb fuck!"
+        else:
+            message = "You're such a fucking idiot you dumbass you have no money you simp."
+    except TypeError:
+        message = "Type a whole number you fuckwit. Stop simping."
+
+    connection.commit()
+    connection.close()
+    return message
 
 
 

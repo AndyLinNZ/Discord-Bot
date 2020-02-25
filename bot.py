@@ -57,6 +57,23 @@ async def clear(ctx, amount=5):
     await ctx.channel.purge(limit=amount)
     await ctx.send(f"Deleted {amount} messages.")
 
+@client.command()
+async def kick(ctx, member : discord.Member, *, reason=None):
+    await member.kick(reason=reason)
+    if reason == None:
+        print(f"I kicked {member} for no reason.")
+    else:
+        print(f"I kicked {member} for {reason})
+
+@client.command()
+async def ban(ctx, member : discord.Member, *, reason=None):
+    await member.ban(reason)
+
+# @client.command(aliases = ["dc"])
+# async def disconnect(ctx, member : discord.Member):
+#     await member.disconnect()
+
+
 @client.command(aliases=["bal"])
 async def balance(ctx):
     userId = ctx.message.author.id

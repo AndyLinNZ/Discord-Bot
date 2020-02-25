@@ -1,5 +1,6 @@
 import discord
 import random
+import sqlite3
 from discord.ext import commands
 
 client = commands.Bot(command_prefix = "now ")
@@ -48,6 +49,43 @@ async def _8ball(ctx, *, question):
             "Outlook not so good.",
             "Very doubtful."]
     await ctx.send(f"Question: {question}\nAnswer: {random.choice(responses)}")
+
+@client.command()
+async def clear(ctx, amount=5):
+    if amount > 100:
+        amount = 100
+    await ctx.channel.purge(limit=amount)
+    await ctx.send(f"Deleted {amount} messages.")
+
+@client.command(aliases=["bal"])
+async def balance(ctx):
+    userId = ctx.message.author.id
+    username = ctx.message.author
+    print(username)
+
+@client.command()
+async def add(ctx, amount):
+    userId = ctx.message.author.id
+    print(str(userId) + "")
+    print(type(str(userId) + ""))
+    username = ctx.message.author
+    insert(userId, username, amount)
+
+
+
+def insert(userId, username, amount):
+    connection = sqlite3.connect("./test.db")
+
+    cursor = connection.cursor()
+    sql = "SELECT * from userInfo where id = ?"
+    cursor.execute(sql, str(userId))
+    data = cursor.fetchone()
+    print(data)
+    # cursor.execute("insert into userInfo values (?, ?, ?)", (str(userId), str(username), amount))
+    connection.commit()
+    connection.close()
+
+
 
 
 

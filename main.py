@@ -24,7 +24,7 @@ async def ping(ctx):
 
 @client.command()
 async def gay(ctx):
-    await ctx.send(f"Lmao you're a fag!")
+    await ctx.send(f"Lmao {ctx.message.author} is a fag!")
 
 @client.command(aliases=["8ball"])
 async def _8ball(ctx, *, question):
@@ -63,7 +63,7 @@ async def kick(ctx, member : discord.Member, *, reason=None):
     if reason == None:
         print(f"I kicked {member} for no reason.")
     else:
-        print(f"I kicked {member} for {reason})
+        print(f"I kicked {member} for {reason}")
 
 @client.command()
 async def ban(ctx, member : discord.Member, *, reason=None):
@@ -78,15 +78,30 @@ async def ban(ctx, member : discord.Member, *, reason=None):
 async def balance(ctx):
     userId = ctx.message.author.id
     username = ctx.message.author
-    print(username)
+    bal = show_balance(userId, username)
+    id = f"<@{userId}>"
+    await ctx.send(f"{id} your balance: ${bal}")
+
+def show_balance(userId, username):
+    connection = sqlite3.connect("./test.db")
+
+    cursor = connection.cursor()
+    sql = "SELECT * from userData where id = ?"
+    cursor.execute(sql, (userId,))
+    data = cursor.fetchone()
+    connection.commit()
+    connection.close()
+    return data[2]
 
 @client.command()
 async def add(ctx, amount):
     userId = ctx.message.author.id
-    print(str(userId) + "")
-    print(type(str(userId) + ""))
+    stupid = ["Are you fucking stupid?", "You're actually brain damaged", "Shut up dumbass", f"Wait your iq is {amount}???"]
     username = ctx.message.author
-    insert(userId, username, amount)
+    if int(amount) > 0:
+        insert(userId, username, amount)
+    else:
+        await ctx.send(f"{random.choice(stupid)}")
 
 
 
@@ -94,13 +109,28 @@ def insert(userId, username, amount):
     connection = sqlite3.connect("./test.db")
 
     cursor = connection.cursor()
-    sql = "SELECT * from userInfo where id = ?"
-    cursor.execute(sql, str(userId))
+    sql = "SELECT * from userData where id = ?"
+    cursor.execute(sql, (userId,))
     data = cursor.fetchone()
     print(data)
-    # cursor.execute("insert into userInfo values (?, ?, ?)", (str(userId), str(username), amount))
+    if data is None:
+        cursor.execute("insert into userData values (?, ?, ?)", (str(userId), str(username), amount))
+    else:
+        cursor.execute("UPDATE userData set balance = balance + ? where id = ?",(amount, str(userId)))
     connection.commit()
     connection.close()
+
+@client.command(aliases=["gamble","flip","coinflip"])
+async def bet(ctx, amount, decision):
+    lst = ["heads", "tails"]
+    answer = random.choice(lst)
+    if answer == decision:
+        message = f"The bot got {answer} you win {int(amount) * 2}!"
+    else:
+        message = f"The bot got {answer} you're dogshit lmao you lost everything!"
+    await ctx.send(message)
+
+
 
 
 

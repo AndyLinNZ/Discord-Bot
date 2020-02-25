@@ -3,6 +3,7 @@ from vars import token
 import random
 import sqlite3
 from discord.ext import commands
+import os
 
 client = commands.Bot(command_prefix = "now ")
 
@@ -171,6 +172,19 @@ async def unban(ctx, *, member):
             await ctx.send(f"Unbanned {user.mention}")
             return
 
+
+# @client.command()
+# async def load(ctx, extension):
+#     client.load_extension(f"cogs.{extension}")
+
+# @client.command()
+# async def unload(ctx, extension):
+#     client.unload_extension(f"cogs.{extension}")
+
+
+# for filename in os.listdir("./cogs"):
+#     if filename.endswith(".py"):
+#         client.load_extension(f"cogs.{filename[:-3]}")
 
 
 

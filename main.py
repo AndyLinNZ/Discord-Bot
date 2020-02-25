@@ -1,4 +1,5 @@
 import discord
+from vars import token
 import random
 import sqlite3
 from discord.ext import commands
@@ -136,4 +137,4 @@ async def bet(ctx, amount, decision):
 
 
 
-client.run("NjgxNjgzNjA1ODIyNzY3MTg3.XlSICA.6CEl1PBSi1p-7SdCWm8Y340K9E8")
+client.run(token)

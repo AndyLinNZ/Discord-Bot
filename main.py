@@ -26,7 +26,8 @@ async def ping(ctx):
 
 @client.command()
 async def gay(ctx):
-    await ctx.send(f"Lmao {ctx.message.author} is a fag!")
+    member_name, member_discriminator = str(ctx.message.author).split("#")
+    await ctx.send(f"Lmao {member_name} is a fag!")
 
 @client.command(aliases=["8ball"])
 async def _8ball(ctx, *, question):

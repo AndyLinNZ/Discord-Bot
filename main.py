@@ -4,6 +4,7 @@ import random
 import sqlite3
 from discord.ext import commands
 import os
+from insults import lst_of_insults
 
 client = commands.Bot(command_prefix = "now ")
 
@@ -172,6 +173,13 @@ async def unban(ctx, *, member):
             await ctx.guild.unban(user)
             await ctx.send(f"Unbanned {user.mention}")
             return
+
+@client.command()
+async def insult(ctx, *, member : discord.Member):
+    # lst = [f"{member.mention} is such a fucking simp", f"{member.mention} has coronavirus go die in a hole", f"Stop simping {member.mention}"]
+    insult = random.choice(lst_of_insults)
+    await ctx.send(f"{member.mention} {insult}")
+
 
 
 # @client.command()

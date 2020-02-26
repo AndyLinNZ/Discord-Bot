@@ -8,6 +8,8 @@ from insults import lst_of_insults
 from itertools import cycle
 import typing
 import youtube_dl
+from discord.utils import get
+import os
 
 client = commands.Bot(command_prefix = "now ")
 status = cycle(["Simp Mania", "Danil", "Simpsons"])
@@ -203,18 +205,94 @@ async def simp(ctx, member : typing.Optional[discord.Member]):
     await ctx.send(f"{member.mention}'s Simp level: {num}%")
 
 @client.command()
-async def play(ctx, url):
+async def join(ctx):
+    global voice
     channel = ctx.message.author.voice.channel
-    await channel.connect()
-    guild = ctx.message.guild
-    voice_client = guild.voice_client
-    player = await voice_client.create_ytdl_player(url)
-    players[guild.id] = player
-    player.start()
+    voice = get(client.voice_clients, guild=ctx.guild)
+
+    if voice and voice.is_connected():
+        await voice.move_to(channel)
+    else:
+        voice = await channel.connect()
+        print(f"The bot has connected to {channel}\n")
+    
+    await ctx.send(f"Joined {channel}")
+
+    # await voice.disconnect()
+
+    # if voice and voice.is_connected():
+    #     await voice.move_to(channel)
+    # else:
+    #     voice = await channel.connect()
+    
+
+
+
+@client.command()
+async def play(ctx, url: str):
+    song_there = os.path.isfile("song.mp3")
+    try:
+        if song_there:
+            os.remove("song.mp3")
+            print("Remove old song file")
+    except PermissionError:
+        print("Trying to delete song file, but it's being played")
+        await ctx.send("Error: Music playing")
+        return
+
+    await ctx.send("Getting everything ready now")
+
+    voice = get(client.voice_clients, guild=ctx.guild)
+
+    ydl_opts = {
+        "format":"bestaudio/best",
+        "postprocessors": [{
+            "key":"FFmpegExtractAudio",
+            "preferredcodec": "mp3",
+            "preferredquality": "192",
+        }],
+    }
+
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        print("Downloading song now\n")
+        ydl.download([url])
+
+    for file in os.listdir("./"):
+        if file.endswith(".mp3"):
+            name = file
+            print(f"Rename File: {file}")
+            os.rename(file, "song.mp3")
+
+    voice.play(discord.FFmpegPCMAudio("song.mp3"), after=lambda e: print(f"{name} has finished playing"))
+    voice.source = discord.PCMVolumeTransformer(voice.source)
+    voice.source.volume = 0.07
+
+    nname = name.rsplit("-", 2)
+    await ctx.send(f"Playing: {nname[0]}")
+    print("playing\n")
+
+
+    # channel = ctx.message.author.voice.channel
+    # await channel.connect()
+    # guild = ctx.message.guild
+    # voice_client = guild.voice_client
+    # player = await voice_client.create_ytdl_player(url)
+    # players[guild.id] = player
+    # player.start()
 
 
 @client.command()
 async def leave(ctx):
-    await ctx.voice_client.disconnect()
+    channel = ctx.message.author.voice.channel
+    voice = get(client.voice_clients, guild=ctx.guild)
+
+    if voice and voice.is_connected():
+        await voice.disconnect()
+        print(f"The bot has left {channel}")
+        await ctx.send(f"Left {channel}")
+    else:
+        print("Bot was told to leave voice channel, but was not in one")
+        await ctx.send("Dont think I am in a channel")
+        # await ctx.voice_client.disconnect()
 
 client.run(token)

@@ -6,6 +6,7 @@ from discord.ext import commands, tasks
 import os
 from insults import lst_of_insults
 from itertools import cycle
+import typing
 
 client = commands.Bot(command_prefix = "now ")
 status = cycle(["Simp Mania", "Danil", "Simpsons"])
@@ -188,6 +189,16 @@ async def insult(ctx, *, member : discord.Member):
     # lst = [f"{member.mention} is such a fucking simp", f"{member.mention} has coronavirus go die in a hole", f"Stop simping {member.mention}"]
     insult = random.choice(lst_of_insults)
     await ctx.send(f"{member.mention} {insult}")
+
+
+@client.command()
+async def simp(ctx, member : typing.Optional[discord.Member]):
+    if member == None:
+        member = ctx.message.author
+    else:
+        member = member
+    num = random.randint(0, 100)
+    await ctx.send(f"{member.mention}'s Simp level: {num}%")
 
 
 

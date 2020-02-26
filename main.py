@@ -7,9 +7,11 @@ import os
 from insults import lst_of_insults
 from itertools import cycle
 import typing
+import youtube_dl
 
 client = commands.Bot(command_prefix = "now ")
 status = cycle(["Simp Mania", "Danil", "Simpsons"])
+players = {}
 
 @client.event
 async def on_ready():
@@ -200,22 +202,19 @@ async def simp(ctx, member : typing.Optional[discord.Member]):
     num = random.randint(0, 100)
     await ctx.send(f"{member.mention}'s Simp level: {num}%")
 
+@client.command()
+async def play(ctx, url):
+    channel = ctx.message.author.voice.channel
+    await channel.connect()
+    guild = ctx.message.guild
+    voice_client = guild.voice_client
+    player = await voice_client.create_ytdl_player(url)
+    players[guild.id] = player
+    player.start()
 
 
-# @client.command()
-# async def load(ctx, extension):
-#     client.load_extension(f"cogs.{extension}")
-
-# @client.command()
-# async def unload(ctx, extension):
-#     client.unload_extension(f"cogs.{extension}")
-
-
-# for filename in os.listdir("./cogs"):
-#     if filename.endswith(".py"):
-#         client.load_extension(f"cogs.{filename[:-3]}")
-
-
-
+@client.command()
+async def leave(ctx):
+    await ctx.voice_client.disconnect()
 
 client.run(token)

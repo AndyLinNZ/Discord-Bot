@@ -2,14 +2,18 @@ import discord
 from vars import token
 import random
 import sqlite3
-from discord.ext import commands
+from discord.ext import commands, tasks
 import os
 from insults import lst_of_insults
+from itertools import cycle
 
 client = commands.Bot(command_prefix = "now ")
+status = cycle(["Simp Mania", "Danil", "Simpsons"])
 
 @client.event
 async def on_ready():
+    change_status.start()
+    # await client.change_presence(status=discord.Status.idle, activity=discord.Game("Simp Mania"))
     print("Bot is ready.")
 
 @client.event
@@ -20,6 +24,9 @@ async def on_member_join(member):
 async def on_member_remove(member):
     print(f"{member} has left a server.")
 
+@tasks.loop(seconds=30)
+async def change_status():
+    await client.change_presence(activity=discord.Game(next(status)))
 
 @client.command()
 async def ping(ctx):
@@ -103,6 +110,8 @@ async def add(ctx, amount):
     userId = ctx.message.author.id
     stupid = ["Are you fucking stupid?", "You're actually brain damaged", "Shut up dumbass", f"Wait your iq is {amount}???"]
     username = ctx.message.author
+    if int(amount) > 10000:
+        amount = 10000
     if int(amount) > 0:
         insert(userId, username, amount)
     else:

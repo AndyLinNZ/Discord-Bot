@@ -16,10 +16,6 @@ status = cycle(["Simp Mania", "Danil", "Simpsons"])
 players = {}
 
 @client.event
-async def hivin(ctx):
-    await ctx.send("Lmao Hivin simps for Y_ _ _ y so hard")
-
-@client.event
 async def on_ready():
     change_status.start()
     # await client.change_presence(status=discord.Status.idle, activity=discord.Game("Simp Mania"))
@@ -307,5 +303,10 @@ async def howgay(ctx, member : typing.Optional[discord.Member]):
         member = member
     num = random.randint(0, 100)
     await ctx.send(f"{member.mention}'s Gay level: {num}%")
+
+
+@client.command()
+async def hivin(ctx):
+    await ctx.send("Lmao Hivin simps for Y_ _ _ y so hard")
 
 client.run(token)

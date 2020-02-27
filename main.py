@@ -15,7 +15,9 @@ client = commands.Bot(command_prefix = "now ")
 status = cycle(["Simp Mania", "Danil", "Simpsons"])
 players = {}
 
-print("Lol Hivin made this bot because he loses all his bets")
+@client.event
+async def hivin(ctx):
+    await ctx.send("Lmao Hivin simps for Y_ _ _ y so hard")
 
 @client.event
 async def on_ready():

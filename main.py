@@ -310,7 +310,7 @@ async def hivins(ctx):
     await ctx.send("Hivin Diyagama is currently a second year in the Bachelor of Medicine and Bachelor " +
     "of Surgery at the University of Auckland. He is in all the medicine group chats and is a regular " +
     "at the medicine events. Currently he is at a 98%" + " simp level and any asian girl he has his eyes on" 
-    + " .Keep your asian girlfriends, children and wives close because if they start with the letter y, oh boy, is she going to fall for Hivin."
+    + " .Keep your asian girlfriends, children and wives close because if they start with the letter y, oh boy, is she going to fall for Hivin.")
     
 
 client.run(token)

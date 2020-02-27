@@ -297,4 +297,13 @@ async def leave(ctx):
         await ctx.send("Dont think I am in a channel")
         # await ctx.voice_client.disconnect()
 
+@client.command()
+async def howgay(ctx, member : typing.Optional[discord.Member]):
+    if member == None:
+        member = ctx.message.author
+    else:
+        member = member
+    num = random.randint(0, 100)
+    await ctx.send(f"{member.mention}'s Gay level: {num}%")
+
 client.run(token)
